@@ -2,7 +2,7 @@
 #include "cmd_Handlers.h"
 #include "cmd_Parse.h"
 #include "tree_Node.h"
-
+#include <memory>
 #ifdef _DEBUG
 #define new DBG_NEW
 #endif

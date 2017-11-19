@@ -1,7 +1,7 @@
 #pragma once
 
 #include "tree_Size.h"
-
+#include <memory>
 #include <string>
 #include <ostream>
 
@@ -20,7 +20,7 @@ namespace tree
 
 		const std::string & Name() const { return _name; }
 
-		static Node * Parse(rapidjson::Value & json);
+		static std::unique_ptr<Node> Parse(rapidjson::Value & json);
 	private:
 		const std::string _name;
 	};

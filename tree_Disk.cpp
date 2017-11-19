@@ -2,24 +2,24 @@
 #include "tree_Disk.h"
 #include "tree_Folder.h"
 #include "tree_Link.h"
-
+#include <memory>
 #include <stack>
 
 #ifdef _DEBUG
 #define new DBG_NEW
 #endif
 
-tree::Folder * tree::ParseDisk(rapidjson::Value & json)
+std::unique_ptr<tree::Folder> tree::ParseDisk(rapidjson::Value & json)
 {
 	// parse disk hierarchy
-	Folder * root = dynamic_cast<Folder*>(Folder::Parse(json));
+	std::unique_ptr<Folder> root = Folder::Parse(json);
 	if (!root)
 		return nullptr;
 
 	// resolve links
 	std::stack<Folder *> folders;
 
-	folders.push(root);
+	folders.push(root.get());
 
 	while (!folders.empty())
 	{
