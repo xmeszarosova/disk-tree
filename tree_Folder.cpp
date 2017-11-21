@@ -49,9 +49,9 @@ void Folder::List(bool bFollow, bool bRecursive, const std::string & offset, std
 	}
 }
 
-void Folder::Insert(Node * node)
+void Folder::Insert(std::unique_ptr<Node> && node)
 {
-	_content.push_back(node);
+	_content.push_back(std::move(node));
 }
 
 Node * Folder::Find(const std::string & path) const
@@ -93,12 +93,12 @@ void Folder::Remove(const Node * node)
 
 std::unique_ptr<Folder> Folder::Parse(rapidjson::Value & json)
 {
-	std::unique_ptr<Folder> folder(nullptr);
+	Folder *folder;
+	//std::unique_ptr<Folder> folder(nullptr);
 	rapidjson::Value * content = nullptr;
 	if (json.IsArray())
 	{	// root
 		content = &json;
-		folder.reset();
 		std::unique_ptr<Folder> folder(new Folder(""));
 	}
 	else
@@ -107,7 +107,6 @@ std::unique_ptr<Folder> Folder::Parse(rapidjson::Value & json)
 			return nullptr;
 
 		content = &(json["content"]);
-		folder.reset();
 		std::unique_ptr<Folder> folder(new Folder(json["name"].GetString()));
 	}
 
