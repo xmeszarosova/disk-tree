@@ -1,6 +1,6 @@
 #include "headers.h"
 #include "tree_Size.h"
-
+#include <memory>
 #include <sstream>
 #include <regex>
 #include <iomanip>

@@ -4,5 +4,5 @@
 
 namespace tree
 {
-	std::unique_ptr<Folder> ParseDisk(rapidjson::Value & json);
+	std::unique_ptr<tree::Folder> ParseDisk(rapidjson::Value & json);
 }
