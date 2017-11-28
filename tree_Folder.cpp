@@ -54,7 +54,7 @@ void Folder::Insert(std::unique_ptr<Node> && node)
 	_content.push_back(std::move(node));
 }
 
-std::unique_ptr<Node> Folder::Find(const std::string & path) const
+Node * Folder::Find(const std::string & path) const
 {
 	std::regex rgx { "/" };
 	auto start = path.begin();
@@ -64,7 +64,7 @@ std::unique_ptr<Node> Folder::Find(const std::string & path) const
 	return Find({ start, path.end(), rgx, -1 });
 }
 
-std::unique_ptr<Node> Folder::Find(std::sregex_token_iterator iter) const
+Node * Folder::Find(std::sregex_token_iterator iter) const
 {
 	if (iter == std::sregex_token_iterator())
 		return nullptr;
@@ -79,14 +79,14 @@ std::unique_ptr<Node> Folder::Find(std::sregex_token_iterator iter) const
 		return nullptr;
 
 	if (++iter == std::sregex_token_iterator())
-		return *itNode;
+		return * itNode;
 
 	auto * folder = dynamic_cast<Folder*>((*itNode).get());
 
 	return folder ? folder->Find(iter) : nullptr;
 }
 
-void Folder::Remove(const std::unique_ptr<Node> node)
+void Folder::Remove(const Node * node)
 {
 	_content.erase(std::remove(_content.begin(), _content.end(), node), _content.end());
 }
