@@ -184,6 +184,11 @@ TEST(Folder, Operations)
 	ptr->Remove(std::move(node));
 	EXPECT_EQ(ptr->Find("/file-X"), nullptr);
 
-	ptr->Insert(std::move(node));
+	//std::unique_ptr<File> Parse(rapidjson::Value & json);
+
+
+	//EXPECT_TRUE((rapidjson::ParseResult)json.Parse());
+	ptr->Insert(tree::File::Parse(json));
 	EXPECT_NE(ptr->Find("/file-X"), nullptr);
+
 }
