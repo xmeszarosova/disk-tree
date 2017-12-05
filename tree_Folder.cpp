@@ -69,7 +69,7 @@ Node * Folder::Find(std::sregex_token_iterator iter) const
 	if (iter == std::sregex_token_iterator())
 		return nullptr;
 
-	auto itNode = std::find_if(_content.begin(), _content.end(), [&iter](std::unique_ptr<Node> node)
+	auto itNode = std::find_if(_content.begin(), _content.end(), [&iter](auto & node)
 	{
 		return node->Name() == *iter;
 	}
@@ -88,18 +88,19 @@ Node * Folder::Find(std::sregex_token_iterator iter) const
 
 void Folder::Remove(const Node * node)
 {
-	_content.erase(std::remove(_content.begin(), _content.end(), node), _content.end());
+	_content.erase(std::remove_if(_content.begin(), _content.end(), [node](auto & ptr) { return ptr.get() == node; }), _content.end());
 }
 
 std::unique_ptr<Folder> Folder::Parse(rapidjson::Value & json)
 {
-	Folder *folder;
+	Folder * folder = nullptr;
 	//std::unique_ptr<Folder> folder(nullptr);
 	rapidjson::Value * content = nullptr;
 	if (json.IsArray())
 	{	// root
 		content = &json;
-		std::unique_ptr<Folder> folder(new Folder(""));
+		//std::unique_ptr<Folder> folder(new Folder(""));
+		folder = new Folder("");
 	}
 	else
 	{
@@ -107,7 +108,8 @@ std::unique_ptr<Folder> Folder::Parse(rapidjson::Value & json)
 			return nullptr;
 
 		content = &(json["content"]);
-		std::unique_ptr<Folder> folder(new Folder(json["name"].GetString()));
+		folder = new Folder(json["name"].GetString());
+		//std::unique_ptr<Folder> folder(new Folder(json["name"].GetString()));
 	}
 
 	for (auto & elm : content->GetArray())
@@ -119,5 +121,5 @@ std::unique_ptr<Folder> Folder::Parse(rapidjson::Value & json)
 		folder->Insert(std::move(pNode));
 	}
 
-	return std::unique_ptr<Folder> {new Folder(*folder)};
+	return std::unique_ptr<Folder> {folder};
 }
