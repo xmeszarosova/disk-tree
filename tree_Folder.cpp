@@ -15,9 +15,9 @@ tree::Size Folder::Size(bool bFollow, bool bRecursive) const
 		_content.begin(),
 		_content.end(),
 		.0,
-		[bFollow, bRecursive](tree::Size size, const Node * node)
+		[bFollow, bRecursive](tree::Size size, auto & node)
 		{
-			auto * folder = dynamic_cast<const Folder*>(node);
+			auto * folder = dynamic_cast<const Folder*>(node.get());
 
 			if (folder)
 			{

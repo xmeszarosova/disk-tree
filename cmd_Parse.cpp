@@ -1,9 +1,12 @@
 #include "headers.h"
 #include "cmd_Parse.h"
 #include "tree_Folder.h"
-
+#include "cmd_Handlers.h"
 #include <regex>
-
+#include <iostream>
+#include <direct.h>
+#include <cstdio>
+#include <windows.h>
 #ifdef _DEBUG
 #define new DBG_NEW
 #endif
@@ -21,18 +24,107 @@ std::optional<std::pair<Command, Options>> cmd::ParseOptions(const std::string &
 	bool bFollow = match[3] == "follow" || match[5] == "follow";
 	bool bRecursive = match[3] == "recursive" || match[5] == "recursive";
 
-	std::string path = match[7].matched ? match[7].str() : "/";
+	std::string path;
 
 	Command command;
+	std::string size;
 
 	if (match[1] == "help")
+	{
 		command = Command::Help;
+
+		if (match[7].matched)
+		{
+			if (match[7].str()[0] == '/' || match[7].str()[0] == '-')
+				return {};
+
+			path = match[7].str();
+		}
+
+	}
 	else if (match[1] == "list")
+	{
 		command = Command::List;
-	else if (match[1] == "size")
+
+		if (match[7].matched)
+		{
+			if (match[7].str()[0] != '/')
+				return {};
+
+			path = match[7].str();
+		}
+
+		else
+		{
+			path = '/';
+		}
+	}
+	else if (match[1] == "size") {
 		command = Command::Size;
+
+		if (match[7].matched)
+		{
+			if (match[7].str()[0] != '/')
+				return {};
+
+			path = match[7].str();
+		}
+
+		else
+		{
+			path = '/';
+		}
+	}
 	else if (match[1] == "quit")
+	{
 		command = Command::Quit;
+		if (match[7].matched)
+			return {};
+	}
+
+	else if (match[1] == "rm")
+	{
+		command = Command::Remove;
+		if (match[7].matched)
+		{
+			if (match[7].str()[0] == '/' || match[7].str()[0] == '-')
+				return {};
+			path = match[7].str();
+		}
+
+	}
+	else if (match[1] == "mkdir")
+	{
+		command = Command::MkDir;
+		if (match[7].matched)
+		{
+			if (match[7].str()[0] == '/' || match[7].str()[0] == '-')
+				return {};
+			path = match[7].str();
+		}
+	}
+
+	else if (match[1] == "rm")
+	{
+		command = Command::Remove;
+		if (match[7].matched)
+		{
+			if (match[7].str()[0] == '/' || match[7].str()[0] == '-')
+				return {};
+			path = match[7].str();
+		}
+
+	}
+	else if (match[1] == "touch")
+	{
+		command = Command::Touch;
+		if (match[7].matched)
+		{
+			if (match[7].str()[0] == '/' || match[7].str()[0] == '-')
+				return {};
+			path = match[7].str();
+		}
+	}
 	else
 		return {};
 
@@ -60,3 +152,34 @@ std::variant<std::string, tree::Node *> cmd::ParsePath(const std::string & path,
 
 	return root;
 }
+
+
+Handler cmd::MkDir(const Options & options)
+{
+	return[path = options.path](Node * node, std::ostream & out)
+	{
+		mkdir(path.c_str());
+		return true;
+	};
+}
+
+Handler cmd::Remove(const Options & options)
+{
+	return[path = options.path](Node * node, std::ostream & out)
+	{
+		_rmdir(path.c_str());
+		remove(path.c_str());
+
+		return true;
+	};
+}
+
+/*Handler cmd::Touch(const Options & options)
+{
+	return[size = options.size, path = options.path](Node * node, std::ostream & out)
+	{
+		
+
+		return {};
+	};
+}*/

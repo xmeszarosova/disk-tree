@@ -20,13 +20,19 @@ Handler cmd::GetHandler(const std::string & line)
 	switch (args.value().first)
 	{
 		case Command::Help:
-			return Help;
+			return Help(args.value().second);
 		case Command::Quit:
 			return Quit;
 		case Command::Size:
 			return Size(args.value().second);
 		case Command::List:
 			return List(args.value().second);
+		case Command::Remove:
+			return Remove(args.value().second);
+		case Command::MkDir:
+			return MkDir(args.value().second);
+		//case Command::Touch:
+			//return Touch(args.value().second);
 	}
 
 	return nullptr;

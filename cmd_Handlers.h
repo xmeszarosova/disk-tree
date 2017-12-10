@@ -16,4 +16,7 @@ namespace cmd
 
 	Handler Size(const Options & options);
 	Handler List(const Options & options);
+	Handler Remove(const Options & options);
+	Handler MkDir(const Options & options);
+	//Handler Touch(const Options & options);
 }
